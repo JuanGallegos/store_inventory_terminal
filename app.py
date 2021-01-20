@@ -66,8 +66,15 @@ if __name__ == '__main__':
                 else:
                     print(product.date_updated, 'is less than', updated)
                     # Using a query to retrieve an object
-                    pdetails = Product.select().where(Product.product_id == product.product_id).get()
-                    pdetails.product_price = price
-                    pdetails.product_quantity = quantity
-                    pdetails.date_updated = updated
-                    pdetails.save()
+                    # pdetails = Product.select().where(Product.product_id == product.product_id).get()
+                    # pdetails.product_price = price
+                    # pdetails.product_quantity = quantity
+                    # pdetails.date_updated = updated
+                    # pdetails.save()
+
+                    # Using update to update object
+                    Product.update(product_price=price,
+                                   product_quantity=quantity,
+                                   date_updated=updated
+                                   ).where(Product.product_id
+                                           == product.product_id).execute()
