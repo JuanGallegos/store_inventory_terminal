@@ -1,5 +1,7 @@
 import datetime
 
+from dataimport import readfile
+
 from peewee import *
 
 
@@ -23,9 +25,40 @@ def initialize():
     db.create_tables([Product], safe=True)
 
 
+def add_entry(product_name, product_price, product_quantity, date_updated):
+    """Add an entry"""
+    Product.create(product_name=product_name,
+                   product_price=product_price,
+                   product_quantity=product_quantity,
+                   date_updated=date_updated)
+    print('Saved successfully!')
+
+
 # Connect the database and create tables
 # in dunder method
 if __name__ == '__main__':
     initialize()
-    # 2. Ensure you load the CSV products data into the created table
-    # 3. Run the app so that use can make menu choices and interact w/ app
+    rows = readfile()
+    for row in rows:
+        try:
+            add_entry(row['product_name'],
+                      int(row['product_price'].replace(
+                          '$', '').replace('.', '')),
+                      int(row['product_quantity']),
+                      datetime.datetime.strptime(row['date_updated'], '%m/%d/%Y'))
+        except IntegrityError:
+            print(f'You\'re trying to duplicate a unique key'.format(row['product_name']))
+            print(row['product_name'],
+                  int(row['product_price'].replace(
+                          '$', '').replace('.', '')),
+                  int(row['product_quantity']),
+                  datetime.datetime.strptime(row['date_updated'], '%m/%d/%Y'))
+            products = Product.select().order_by(Product.date_updated.desc())
+            products = products.where(
+                Product.product_name.contains(row['product_name']))
+            for product in products:
+                print(product.product_id,
+                      product.product_name,
+                      product.product_price,
+                      product.product_quantity,
+                      product.date_updated)
