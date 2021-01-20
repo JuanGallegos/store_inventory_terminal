@@ -56,8 +56,18 @@ if __name__ == '__main__':
             products = Product.select().order_by(Product.date_updated.desc())
             products = products.where(Product.product_name.contains(name))
             for product in products:
-                print(product.product_id,
-                      product.product_name,
-                      product.product_price,
-                      product.product_quantity,
-                      product.date_updated)
+                # print(product.product_id,
+                #       product.product_name,
+                #       product.product_price,
+                #       product.product_quantity,
+                #       product.date_updated)
+                if product.date_updated > updated:
+                    print(product.date_updated, 'is greater than', updated)
+                else:
+                    print(product.date_updated, 'is less than', updated)
+                    # Using a query to retrieve an object
+                    pdetails = Product.select().where(Product.product_id == product.product_id).get()
+                    pdetails.product_price = price
+                    pdetails.product_quantity = quantity
+                    pdetails.date_updated = updated
+                    pdetails.save()
