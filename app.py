@@ -1,22 +1,23 @@
 import datetime
-
-from dataimport import readfile
+from store_inventory.menu import Menu
+from store_inventory.models import Product, db
+from store_inventory.dataimport import readfile
 
 from peewee import *
 
 
-db = SqliteDatabase('inventory.db')
-
-
-class Product(Model):
-    product_id = PrimaryKeyField()
-    product_name = CharField(max_length=255, unique=True)
-    product_price = IntegerField()
-    product_quantity = IntegerField()
-    date_updated = DateTimeField(default=datetime.datetime.now)
-
-    class Meta:
-        database = db
+# db = SqliteDatabase('inventory.db')
+#
+#
+# class Product(Model):
+#     product_id = PrimaryKeyField()
+#     product_name = CharField(max_length=255, unique=True)
+#     product_price = IntegerField()
+#     product_quantity = IntegerField()
+#     date_updated = DateTimeField(default=datetime.datetime.now)
+#
+#     class Meta:
+#         database = db
 
 
 def initialize():
@@ -38,6 +39,10 @@ def add_entry(product_name, product_price, product_quantity, date_updated):
 # in dunder method
 if __name__ == '__main__':
     initialize()
+    # menu = Menu()
+    # menu.greeting()
+    # menu.menu_display()
+
     rows = readfile()
     for row in rows:
         name = row['product_name']
