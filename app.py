@@ -40,14 +40,15 @@ if __name__ == '__main__':
     initialize()
     rows = readfile()
     for row in rows:
+        name = row['product_name']
+        price = int(row['product_price'].replace(
+                '$', '').replace('.', ''))
+        quantity = int(row['product_quantity'])
+        updated = datetime.datetime.strptime(row['date_updated'], '%m/%d/%Y')
         try:
-            add_entry(row['product_name'],
-                      int(row['product_price'].replace(
-                          '$', '').replace('.', '')),
-                      int(row['product_quantity']),
-                      datetime.datetime.strptime(row['date_updated'], '%m/%d/%Y'))
+            add_entry(name, price, quantity, updated)
         except IntegrityError:
-            print(f'You\'re trying to duplicate a unique key'.format(row['product_name']))
+            #print('You\'re trying to duplicate which has a unique key')
             print(row['product_name'],
                   int(row['product_price'].replace(
                           '$', '').replace('.', '')),
