@@ -48,15 +48,13 @@ if __name__ == '__main__':
         try:
             add_entry(name, price, quantity, updated)
         except IntegrityError:
-            #print('You\'re trying to duplicate which has a unique key')
-            print(row['product_name'],
-                  int(row['product_price'].replace(
-                          '$', '').replace('.', '')),
-                  int(row['product_quantity']),
-                  datetime.datetime.strptime(row['date_updated'], '%m/%d/%Y'))
+            print(f'You\'re trying to duplicate "{name}" which has a unique key.')
+            print(name,
+                  price,
+                  quantity,
+                  updated)
             products = Product.select().order_by(Product.date_updated.desc())
-            products = products.where(
-                Product.product_name.contains(row['product_name']))
+            products = products.where(Product.product_name.contains(name))
             for product in products:
                 print(product.product_id,
                       product.product_name,
