@@ -12,13 +12,31 @@ def initialize():
     db.create_tables([Product], safe=True)
 
 
+def import_data():
+    rows = readfile()
+    return rows
+
+
+def clean_data(rows):
+    for row in rows:
+        name = row['product_name']
+        price = int(row['product_price'].replace(
+                '$', '').replace('.', ''))
+        quantity = int(row['product_quantity'])
+        updated = datetime.datetime.strptime(row['date_updated'], '%m/%d/%Y')
+        try:
+            add_entry(name, price, quantity, updated)
+        except IntegrityError:
+            address_duplicates(name, price, quantity, updated)
+
+
 def add_entry(product_name, product_price, product_quantity, date_updated):
     """Add an entry"""
     Product.create(product_name=product_name,
                    product_price=product_price,
                    product_quantity=product_quantity,
                    date_updated=date_updated)
-    print('Saved successfully!')
+    # print('Saved successfully!')
 
 
 def get_product_by_name(name):
@@ -56,10 +74,10 @@ def address_duplicates(name, price, quantity, updated):
     products = get_product_by_name(name)
     for product in products:
         if product.date_updated < updated:
-            print(product.date_updated, 'is less than', updated)
+            #print(product.date_updated, 'is less than', updated)
             update_entry(product, price, quantity, updated)
         else:
-            print(product.date_updated, 'is greater than', updated)
+            #print(product.date_updated, 'is greater than', updated)
             continue
 
 
@@ -67,18 +85,8 @@ def address_duplicates(name, price, quantity, updated):
 # in dunder method
 if __name__ == '__main__':
     initialize()
-    # menu = Menu()
-    # menu.greeting()
-    # menu.menu_display()
-
-    rows = readfile()
-    for row in rows:
-        name = row['product_name']
-        price = int(row['product_price'].replace(
-                '$', '').replace('.', ''))
-        quantity = int(row['product_quantity'])
-        updated = datetime.datetime.strptime(row['date_updated'], '%m/%d/%Y')
-        try:
-            add_entry(name, price, quantity, updated)
-        except IntegrityError:
-            address_duplicates(name, price, quantity, updated)
+    data = import_data()
+    clean_data(data)
+    menu = Menu()
+    menu.greeting()
+    menu.menu_display()
