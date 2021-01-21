@@ -6,20 +6,6 @@ from store_inventory.dataimport import readfile
 from peewee import *
 
 
-# db = SqliteDatabase('inventory.db')
-#
-#
-# class Product(Model):
-#     product_id = PrimaryKeyField()
-#     product_name = CharField(max_length=255, unique=True)
-#     product_price = IntegerField()
-#     product_quantity = IntegerField()
-#     date_updated = DateTimeField(default=datetime.datetime.now)
-#
-#     class Meta:
-#         database = db
-
-
 def initialize():
     """Create the database and table if they do not exist."""
     db.connect()
@@ -33,6 +19,48 @@ def add_entry(product_name, product_price, product_quantity, date_updated):
                    product_quantity=product_quantity,
                    date_updated=date_updated)
     print('Saved successfully!')
+
+
+def get_product_by_name(name):
+    '''Returns products where product_name contains name'''
+    products = Product.select().order_by(Product.date_updated.desc())
+    products = products.where(Product.product_name.contains(name))
+    return products
+
+
+def update_entry_using_query(product, price, quantity, updated):
+    '''Query and retrieve an object by ID and then update product details'''
+    pdetails = Product.select().where(Product.product_id == product.product_id)
+    pdetails.get()
+    pdetails.product_price = price
+    pdetails.product_quantity = quantity
+    pdetails.date_updated = updated
+    pdetails.save()
+
+
+def update_entry(product, price, quantity, updated):
+    '''Use update statement to update product details where product_id'''
+    q = Product.update(product_price=price,
+                       product_quantity=quantity,
+                       date_updated=updated
+                       ).where(Product.product_id == product.product_id)
+    q.execute()
+
+
+def address_duplicates(name, price, quantity, updated):
+    '''
+    Gets products and checks whether there is duplicates.
+    If there are duplicates, then a method is called to save the data
+    with the most recent data in the existing record.
+    '''
+    products = get_product_by_name(name)
+    for product in products:
+        if product.date_updated < updated:
+            print(product.date_updated, 'is less than', updated)
+            update_entry(product, price, quantity, updated)
+        else:
+            print(product.date_updated, 'is greater than', updated)
+            continue
 
 
 # Connect the database and create tables
@@ -53,33 +81,4 @@ if __name__ == '__main__':
         try:
             add_entry(name, price, quantity, updated)
         except IntegrityError:
-            print(f'You\'re trying to duplicate "{name}" which has a unique key.')
-            print(name,
-                  price,
-                  quantity,
-                  updated)
-            products = Product.select().order_by(Product.date_updated.desc())
-            products = products.where(Product.product_name.contains(name))
-            for product in products:
-                # print(product.product_id,
-                #       product.product_name,
-                #       product.product_price,
-                #       product.product_quantity,
-                #       product.date_updated)
-                if product.date_updated > updated:
-                    print(product.date_updated, 'is greater than', updated)
-                else:
-                    print(product.date_updated, 'is less than', updated)
-                    # Using a query to retrieve an object
-                    # pdetails = Product.select().where(Product.product_id == product.product_id).get()
-                    # pdetails.product_price = price
-                    # pdetails.product_quantity = quantity
-                    # pdetails.date_updated = updated
-                    # pdetails.save()
-
-                    # Using update to update object
-                    Product.update(product_price=price,
-                                   product_quantity=quantity,
-                                   date_updated=updated
-                                   ).where(Product.product_id
-                                           == product.product_id).execute()
+            address_duplicates(name, price, quantity, updated)
