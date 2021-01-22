@@ -24,8 +24,12 @@ class DataImporter:
             price = int(row['product_price'].replace(
                     '$', '').replace('.', ''))
             quantity = int(row['product_quantity'])
-            updated = datetime.datetime.strptime(
-                row['date_updated'], '%m/%d/%Y')
+            if row['date_updated'] is not None:
+                updated = datetime.datetime.strptime(
+                    row['date_updated'], '%m/%d/%Y')
+            else:
+                updated = datetime.datetime.now()
+
             try:
                 self.add_import_entry(name, price, quantity, updated)
             except IntegrityError:
