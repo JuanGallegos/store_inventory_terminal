@@ -1,5 +1,12 @@
 import datetime
-from peewee import Model, PrimaryKeyField, CharField, IntegerField, DateTimeField, SqliteDatabase
+from peewee import (
+    Model,
+    PrimaryKeyField,
+    CharField,
+    IntegerField,
+    DateTimeField,
+    SqliteDatabase,
+    IntegrityError)
 
 db = SqliteDatabase('inventory.db')
 
@@ -19,19 +26,15 @@ class Product(Model):
         db.connect()
         db.create_tables([Product], safe=True)
 
-    def add_import_entry(self, product_name, product_price,
-                         product_quantity, date_updated):
-        """Add an entry"""
-        Product.create(product_name=product_name,
-                       product_price=product_price,
-                       product_quantity=product_quantity,
-                       date_updated=date_updated)
-        # print('Saved successfully!')
-
     def get_product_by_name(self, name):
         '''Returns products where product_name contains name'''
         products = Product.select().order_by(Product.date_updated.desc())
         products = products.where(Product.product_name.contains(name))
+        return products
+
+    def get_product_by_id(self, id):
+        '''Returns products where product_name contains name'''
+        products = Product.select().where(Product.product_id == id)
         return products
 
     def update_entry_using_query(self, product, price, quantity, updated):
