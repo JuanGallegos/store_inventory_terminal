@@ -1,9 +1,9 @@
-import datetime
+# import datetime
 from store_inventory.menu import Menu
-from store_inventory.models import Product, db
+from store_inventory.models import Product
 from store_inventory.dataimport import DataImporter
 
-from peewee import *
+# from peewee import *
 
 
 def main():
@@ -12,8 +12,8 @@ def main():
     # data = dimporter.import_data()
     data = DataImporter().import_data()
     DataImporter().clean_data(data)
-    # Menu().greeting()
-    # Menu().menu_display()
+    Menu().greeting()
+    Menu().menu_display()
 
 
 if __name__ == '__main__':
