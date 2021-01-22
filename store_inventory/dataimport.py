@@ -1,7 +1,7 @@
 import csv
 import datetime
-from store_inventory.models import Product, db
-from peewee import *
+from store_inventory.models import Product
+from peewee import IntegrityError
 
 
 class DataImporter:
@@ -13,7 +13,7 @@ class DataImporter:
         return rows
 
     def readfile(self):
-        with open('inventory.csv', newline='') as csvfile:
+        with open('import_data/inventory.csv', newline='') as csvfile:
             prodreader = csv.DictReader(csvfile, delimiter=',')
             rows = list(prodreader)
             return rows
@@ -27,10 +27,19 @@ class DataImporter:
             updated = datetime.datetime.strptime(
                 row['date_updated'], '%m/%d/%Y')
             try:
-                Product().add_import_entry(name, price, quantity, updated)
+                self.add_import_entry(name, price, quantity, updated)
             except IntegrityError:
                 pass
                 self.address_duplicates(name, price, quantity, updated)
+
+    def add_import_entry(self, product_name, product_price,
+                         product_quantity, date_updated):
+        """Add an entry"""
+        Product.create(product_name=product_name,
+                       product_price=product_price,
+                       product_quantity=product_quantity,
+                       date_updated=date_updated)
+        # print('Saved successfully!')
 
     def address_duplicates(self, name, price, quantity, updated):
         '''
@@ -41,14 +50,9 @@ class DataImporter:
         products = Product().get_product_by_name(name)
         for product in products:
             if product.date_updated < updated:
-                # print(product.date_updated, 'is less than', updated)
+                print(product.date_updated, 'is less than', updated)
+                print('The existing product will be updated with this record')
                 Product().update_entry(product, price, quantity, updated)
             else:
                 # print(product.date_updated, 'is greater than', updated)
                 continue
-
-
-if __name__ == '__main__':
-    rows = DataImporter.readfile()
-    for row in rows:
-        print(row['product_name'])
