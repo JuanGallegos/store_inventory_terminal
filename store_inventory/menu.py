@@ -1,4 +1,6 @@
 from collections import OrderedDict
+from store_inventory.models import Product
+from store_inventory.dataimport import DataImporter
 import os
 import sys
 
@@ -14,17 +16,18 @@ class Menu:
             ])
 
     def greeting(self):
-        print('---------------------------')
-        print('---------------------------')
-        print('------Hello World----------')
-        print('---------------------------')
-        print('---------------------------')
+        self.clear()
+        message = '---------------Hello World---------------'
+        print('-'*len(message))
+        print('-'*len(message))
+        print(message)
+        print('-'*len(message))
+        print('-'*len(message))
 
     def menu_display(self):
         choice = None
-        while choice != 'q':
+        while True:
             # self.clear()
-            print('Enter \'q\' to quit.')
             for key, value in self.options.items():
                 print('{}) {}'.format(key, value.__doc__))
             choice = input('Action: ').lower().strip()
@@ -37,11 +40,31 @@ class Menu:
 
     def display_product(self):
         '''Display a product by its ID'''
-        print('display_product method')
+        self.clear()
+        id = None
+        id = input('Enter the ID to return data: ').lower().strip()
+        data = Product().get_product_by_id(id)
+        for product in data:
+            print(product.product_id,
+                  ',', product.product_name,
+                  ',', product.product_price,
+                  ',', product.product_quantity,
+                  ',', product.date_updated)
 
     def add_product(self):
         '''Add a product to the database'''
-        print('add_product method')
+        print('Please enter the following information.')
+        name = input('Product: ').strip()
+        price = input('Price ($8.05): ').lower().strip()
+        quantity = input('Quantity (81): ').lower().strip()
+        updated = input('Updated Date (12/28/2011): ').lower().strip()
+        product = [{'product_name': name,
+                    'product_price': price,
+                    'product_quantity': quantity,
+                    'date_updated': updated
+                    },
+                   ]
+        DataImporter().clean_data(product)
 
     def backup_database(self):
         '''Backup the database (Export new CSV)'''
@@ -49,14 +72,13 @@ class Menu:
 
     def exit_menu(self):
         '''Exit Menu'''
-        print('exit_menu method')
+        message = 'Thank you for using the Store Inventory application'
+        self.clear()
+        print('-'*len(message))
+        print(message)
+        print('-'*len(message))
+        sys.exit()
 
     def clear(self):
         '''Clear Screen'''
         os.system('cls' if os.name == 'nt' else 'clear')
-
-
-# if __name__ == '__main__':
-#     menu = Menu()
-#     menu.greeting()
-#     menu.menu_display()
