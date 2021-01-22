@@ -57,7 +57,7 @@ class Menu:
         name = input('Product: ').strip()
         price = input('Price ($8.05): ').lower().strip()
         quantity = input('Quantity (81): ').lower().strip()
-        updated = input('Updated Date (12/28/2011): ').lower().strip()
+        updated = None
         product = [{'product_name': name,
                     'product_price': price,
                     'product_quantity': quantity,
