@@ -64,7 +64,7 @@ class Menu:
                 for product in data:
                     print(product.product_id,
                           ',', product.product_name,
-                          ',', product.product_price,
+                          ',', '${:.2f}'.format(product.product_price/100),
                           ',', product.product_quantity,
                           ',', product.date_updated)
             self.end_message_after_action()
