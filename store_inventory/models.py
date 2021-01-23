@@ -5,8 +5,7 @@ from peewee import (
     CharField,
     IntegerField,
     DateTimeField,
-    SqliteDatabase,
-    IntegrityError)
+    SqliteDatabase)
 
 db = SqliteDatabase('inventory.db')
 
