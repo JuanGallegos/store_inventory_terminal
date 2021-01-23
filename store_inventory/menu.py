@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from store_inventory.models import Product
 from store_inventory.dataimport import DataImporter
+from store_inventory.dataexport import DataExporter
 import os
 import sys
 
@@ -17,16 +18,20 @@ class Menu:
 
     def greeting(self):
         self.clear()
-        message = '---------------Hello World---------------'
+        message = '------ Hello, Welcome to Store Inventory Application ------'
         print('-'*len(message))
         print('-'*len(message))
         print(message)
         print('-'*len(message))
         print('-'*len(message))
+        print()
 
     def menu_display(self):
         choice = None
         while True:
+            print('-'*50)
+            print('Please make your selection from the options below:')
+            print('-'*50)
             # self.clear()
             for key, value in self.options.items():
                 print('{}) {}'.format(key, value.__doc__))
@@ -36,13 +41,20 @@ class Menu:
                 # self.clear()
                 self.options[choice]()
             else:
-                print('That is not a valid selection.')
+                self.clear()
+                print('-'*50)
+                print(f'\'{choice}\' is not a valid selection.')
+                print('-'*50)
+                input('Press Enter to Continue.')
+                self.clear()
 
     def display_product(self):
         '''Display a product by its ID'''
         self.clear()
         id = None
+        print('-'*50)
         id = input('Enter the ID to return data: ').lower().strip()
+        print('-'*50)
         data = Product().get_product_by_id(id)
         for product in data:
             print(product.product_id,
@@ -50,6 +62,9 @@ class Menu:
                   ',', product.product_price,
                   ',', product.product_quantity,
                   ',', product.date_updated)
+        print('-'*50)
+        input('Press Enter to Continue.')
+        self.clear()
 
     def add_product(self):
         '''Add a product to the database'''
@@ -68,7 +83,13 @@ class Menu:
 
     def backup_database(self):
         '''Backup the database (Export new CSV)'''
-        print('backup_database method')
+        DataExporter().backup_database()
+        self.clear()
+        print('-'*50)
+        print('Your backup file has been created.')
+        print('-'*50)
+        input('Press Enter to Continue.')
+        self.clear()
 
     def exit_menu(self):
         '''Exit Menu'''
