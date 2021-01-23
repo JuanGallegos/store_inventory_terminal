@@ -98,8 +98,11 @@ class Menu:
         print('-'*50)
         try:
             DataImporter().clean_data(product)
-        except:
-            print('Something went wrong.')
+        except ValueError:
+            print('You entered a product that does not follow the format.')
+            print('-'*50)
+            input('Press Enter to Continue.')
+            self.clear()
         else:
             print('Your entry has been recorded.')
             input('Press Enter to Continue.')
