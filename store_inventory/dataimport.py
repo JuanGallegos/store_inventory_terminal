@@ -54,8 +54,8 @@ class DataImporter:
         products = Product().get_product_by_name(name)
         for product in products:
             if product.date_updated < updated:
-                print(product.date_updated, 'is less than', updated)
-                print('The existing product will be updated with this record')
+                # print(product.date_updated, 'is less than', updated)
+                print('The existing product will be updated with this record.')
                 Product().update_entry(product, price, quantity, updated)
             else:
                 # print(product.date_updated, 'is greater than', updated)
