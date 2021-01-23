@@ -68,7 +68,10 @@ class Menu:
 
     def add_product(self):
         '''Add a product to the database'''
+        self.clear()
+        print('-'*50)
         print('Please enter the following information.')
+        print('-'*50)
         name = input('Product: ').strip()
         price = input('Price ($8.05): ').lower().strip()
         quantity = input('Quantity (81): ').lower().strip()
@@ -79,7 +82,16 @@ class Menu:
                     'date_updated': updated
                     },
                    ]
-        DataImporter().clean_data(product)
+
+        print('-'*50)
+        try:
+            DataImporter().clean_data(product)
+        except:
+            print('Something went wrong.')
+        else:
+            print('Your entry has been recorded.')
+            input('Press Enter to Continue.')
+            self.clear()
 
     def backup_database(self):
         '''Backup the database (Export new CSV)'''
