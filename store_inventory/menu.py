@@ -16,6 +16,7 @@ class Menu:
             ])
 
     def greeting(self):
+        '''Welcome message to Inventory Application'''
         self.clear()
         message = '------- Welcome to the Store Inventory Application -------'
         print('-'*len(message))
@@ -25,11 +26,13 @@ class Menu:
         print('-'*len(message))
 
     def end_message_after_action(self):
+        '''Output after completion of chosen menu option.'''
         print('-'*70)
         input('Press Enter to Continue.')
         self.clear()
 
     def menu_display(self):
+        '''Menu Display.'''
         choice = None
         self.greeting()
         while True:
