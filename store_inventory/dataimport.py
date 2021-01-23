@@ -5,20 +5,20 @@ from peewee import IntegrityError
 
 
 class DataImporter:
-    def __init__(self):
-        pass
-
     def import_data(self):
+        '''Calls readfile to import data'''
         rows = self.readfile()
         return rows
 
     def readfile(self):
+        '''Uses DictReader to read csvfile'''
         with open('import_data/inventory.csv', newline='') as csvfile:
             prodreader = csv.DictReader(csvfile, delimiter=',')
             rows = list(prodreader)
             return rows
 
     def clean_data(self, rows):
+        '''Cleans data during import and checks for Integrity Error'''
         for row in rows:
             name = row['product_name']
             price = int(row['product_price'].replace(
