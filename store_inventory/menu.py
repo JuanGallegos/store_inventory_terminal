@@ -1,9 +1,9 @@
 from collections import OrderedDict
+import os
+import sys
 from store_inventory.models import Product
 from store_inventory.dataimport import DataImporter
 from store_inventory.dataexport import DataExporter
-import os
-import sys
 
 
 class Menu:
@@ -12,7 +12,6 @@ class Menu:
             ('v', self.display_product),
             ('a', self.add_product),
             ('b', self.backup_database),
-            ('c', self.clear),
             ('e', self.exit_menu),
             ])
 
@@ -24,40 +23,39 @@ class Menu:
         print(message)
         print('-'*len(message))
         print('-'*len(message))
-        print()
+
+    def end_message_after_action(self):
+        print('-'*70)
+        input('Press Enter to Continue.')
+        self.clear()
 
     def menu_display(self):
         choice = None
         self.greeting()
         while True:
-            print('-'*50)
             print('Please make your selection from the options below:')
-            print('-'*50)
-            # self.clear()
+
             for key, value in self.options.items():
                 print('{}) {}'.format(key, value.__doc__))
             choice = input('Action: ').lower().strip()
 
             if choice in self.options:
-                # self.clear()
                 self.options[choice]()
             else:
                 self.clear()
-                print('-'*50)
+                print('-'*70)
                 print(f'\'{choice}\' is not a valid selection.')
-                print('-'*50)
-                input('Press Enter to Continue.')
-                self.clear()
+                self.end_message_after_action()
 
     def display_product(self):
         '''Display a product by its ID'''
-        self.clear()
         id = None
-        print('-'*50)
+        self.clear()
+        print('-'*70)
 
         try:
             id = input('Enter the ID to return data: ').lower().strip()
-            print('-'*50)
+            print('-'*70)
             data = Product().get_product_by_id(id)
 
             if not data.exists():
@@ -69,21 +67,18 @@ class Menu:
                           ',', product.product_price,
                           ',', product.product_quantity,
                           ',', product.date_updated)
-            print('-'*50)
-            input('Press Enter to Continue.')
-            self.clear()
+            self.end_message_after_action()
+
         except ValueError:
             print('This is not a valid ID.')
-            print('-'*50)
-            input('Press Enter to Continue.')
-            self.clear()
+            self.end_message_after_action()
 
     def add_product(self):
         '''Add a product to the database'''
         self.clear()
-        print('-'*50)
+        print('-'*70)
         print('Please enter the following information.')
-        print('-'*50)
+        print('-'*70)
         name = input('Product: ').strip()
         price = input('Price ($8.05): ').lower().strip()
         quantity = input('Quantity (81): ').lower().strip()
@@ -95,28 +90,26 @@ class Menu:
                     },
                    ]
 
-        print('-'*50)
+        print('-'*70)
+
         try:
             DataImporter().clean_data(product)
         except ValueError:
             print('You entered a product that does not follow the format.')
-            print('-'*50)
+            print('-'*70)
             input('Press Enter to Continue.')
             self.clear()
         else:
             print('Your entry has been recorded.')
-            input('Press Enter to Continue.')
-            self.clear()
+            self.end_message_after_action()
 
     def backup_database(self):
         '''Backup the database (Export new CSV)'''
         DataExporter().backup_database()
         self.clear()
-        print('-'*50)
+        print('-'*70)
         print('Your backup file has been created.')
-        print('-'*50)
-        input('Press Enter to Continue.')
-        self.clear()
+        self.end_message_after_action()
 
     def exit_menu(self):
         '''Exit Menu'''
