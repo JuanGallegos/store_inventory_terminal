@@ -18,7 +18,7 @@ class Menu:
 
     def greeting(self):
         self.clear()
-        message = '------ Hello, Welcome to Store Inventory Application ------'
+        message = '------- Welcome to the Store Inventory Application -------'
         print('-'*len(message))
         print('-'*len(message))
         print(message)
@@ -28,6 +28,7 @@ class Menu:
 
     def menu_display(self):
         choice = None
+        self.greeting()
         while True:
             print('-'*50)
             print('Please make your selection from the options below:')
@@ -53,18 +54,29 @@ class Menu:
         self.clear()
         id = None
         print('-'*50)
-        id = input('Enter the ID to return data: ').lower().strip()
-        print('-'*50)
-        data = Product().get_product_by_id(id)
-        for product in data:
-            print(product.product_id,
-                  ',', product.product_name,
-                  ',', product.product_price,
-                  ',', product.product_quantity,
-                  ',', product.date_updated)
-        print('-'*50)
-        input('Press Enter to Continue.')
-        self.clear()
+
+        try:
+            id = input('Enter the ID to return data: ').lower().strip()
+            print('-'*50)
+            data = Product().get_product_by_id(id)
+
+            if not data.exists():
+                print('There is no data associated to that ID.')
+            else:
+                for product in data:
+                    print(product.product_id,
+                          ',', product.product_name,
+                          ',', product.product_price,
+                          ',', product.product_quantity,
+                          ',', product.date_updated)
+            print('-'*50)
+            input('Press Enter to Continue.')
+            self.clear()
+        except ValueError:
+            print('This is not a valid ID.')
+            print('-'*50)
+            input('Press Enter to Continue.')
+            self.clear()
 
     def add_product(self):
         '''Add a product to the database'''
