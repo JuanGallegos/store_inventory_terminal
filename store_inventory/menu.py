@@ -96,9 +96,7 @@ class Menu:
             DataImporter().clean_data(product)
         except ValueError:
             print('You entered a product that does not follow the format.')
-            print('-'*70)
-            input('Press Enter to Continue.')
-            self.clear()
+            self.end_message_after_action()
         else:
             print('Your entry has been recorded.')
             self.end_message_after_action()
