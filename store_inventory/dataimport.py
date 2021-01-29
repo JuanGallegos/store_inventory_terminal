@@ -21,8 +21,8 @@ class DataImporter:
         '''Cleans data during import and checks for Integrity Error'''
         for row in rows:
             name = row['product_name']
-            price = int(row['product_price'].replace(
-                    '$', '').replace('.', ''))
+            price = int(float(row['product_price'].replace(
+                    '$', '')) * 100)
             quantity = int(row['product_quantity'])
             if row['date_updated'] is not None:
                 updated = datetime.datetime.strptime(
